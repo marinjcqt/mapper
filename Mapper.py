@@ -11,6 +11,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 import networkx as nx
+from itertools import combinations
+
 
 
 # Functions f (can be a projection)
@@ -225,6 +227,28 @@ def add_column(A,j,L):  #Add the column in L to the j-th column
             A[i][j]+=A[i][k]
     Z2_coeff(A)
 
+def is_canceled(A,j,L): #Return True if adding the column of list L to the j-th column make it a zero column
+    B=A.copy()
+    add_column(B,j,L)
+    m=B.shape[0]
+    for i in range(m):
+        if B[i][j] != 0:
+            return False
+    return True
+
+def is_zero_column(A,j):    #Return true iff the j-th column of A is null
+    m=A.shape[0]
+    for i in range(m):
+        if A[i][j] != 0:
+            return False
+    return True
+
+def combination(L): #Return all the possible combination with elements of L
+    C=[]
+    for k in range(1,len(L)+1):
+        C+=list(combinations(L,k))
+    return C
+
 def Z2_coeff(A):
     size=A.shape
     m,n=size[0],size[1]
@@ -237,6 +261,23 @@ def Z2_coeff(A):
             if A[i][j]%2 ==1 and A[i][j]>0:
                 A[i][j] = 1
 
+def reduction(A):
+    n=A.shape[1]
+    non_zero_column=[0]
+    for j in range(1,n):
+        comb=combination(non_zero_column)
+        canceled=False
+        for L in comb:
+            if is_canceled(A,j,L):
+                add_column(A,j,L)
+                canceled=True
+                break
+        if not canceled:
+            non_zero_column.append(j)
+    return A
+        
+
+
 def show_graph(data):
     # data is a list of list. sublist of len 1 is a node, sublist of len 2 is an edge
     G = nx.Graph()
@@ -247,22 +288,25 @@ def show_graph(data):
     nx.draw(G, with_labels=True)
     plt.show()
 
-# X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
-# A=boundary_matrix(X)
+X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
+A=boundary_matrix(X)
 # print(A)
 # print()
 # add_column(A,3,[0,1])
 # print(A)
+print(reduction(A))
 
 
 
+"""
+file="ant.ply"
+X=export(file)
 
-X=export("ant.ply")
 # print(X)
 # display(X)
 mapper_data = mapper(X,d_from_x_axis,5,5,0.25)
 print(mapper_data)
 
 show_graph(mapper_data)
-#nearest_neighbor(X)
-#clustering(X,0.2)
+
+"""
