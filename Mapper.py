@@ -88,14 +88,21 @@ def graph(clusters):
 
 #Return the list of points in the ply file
 def export(file):
-    pattern = re.compile(r"([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))? ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))? ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))? ", re.IGNORECASE)
     with open(file, "r") as f:
-        lines = f.readlines()
-    points = []
-    for line in lines:
-        if pattern.match(line):
-            m = re.search(pattern, line)
-            points.append([float(m.group(1)), float(m.group(3)), float(m.group(5))])
+        line = None
+        while line != 'end_header\n':
+            line = f.readline()
+        
+        points = []
+        while True:
+            line = f.readline()[:-2]
+            nbrs = line.split(' ')
+            print('line', line)
+            print('nbrs', nbrs)
+            if len(nbrs) == 3:
+                points.append(tuple(float(num) for num in nbrs))
+            else:
+                break
     return points
 
 
