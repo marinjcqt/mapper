@@ -10,7 +10,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
-import re
+import networkx as nx
 
 
 # Functions f (can be a projection)
@@ -97,8 +97,6 @@ def export(file):
         while True:
             line = f.readline()[:-2]
             nbrs = line.split(' ')
-            print('line', line)
-            print('nbrs', nbrs)
             if len(nbrs) == 3:
                 points.append(tuple(float(num) for num in nbrs))
             else:
@@ -199,7 +197,7 @@ def mapper(X,f,k,l,p):
     F=[f(x) for x in X]
     m,M=min(F),max(F)
     U=covering(m,M,k,p)
-    print(U)
+    # print(U)
     pre_U=pre_image(F,U,X)
     C=[]
     
@@ -239,22 +237,32 @@ def Z2_coeff(A):
             if A[i][j]%2 ==1 and A[i][j]>0:
                 A[i][j] = 1
 
+def show_graph(data):
+    # data is a list of list. sublist of len 1 is a node, sublist of len 2 is an edge
+    G = nx.Graph()
+    nodes = set().union(*data)
+    edges = [tuple(edge) for edge in data if len(edge) == 2]
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges) 
+    nx.draw(G, with_labels=True)
+    plt.show()
+
+# X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
+# A=boundary_matrix(X)
+# print(A)
+# print()
+# add_column(A,3,[0,1])
+# print(A)
 
 
-X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
-A=boundary_matrix(X)
-print(A)
-print()
-add_column(A,3,[0,1])
-print(A)
 
 
-
-"""
 X=export("ant.ply")
-print(X)
-display(X)
-print(mapper(X,d_from_x_axis,5,5,0.25))
+# print(X)
+# display(X)
+mapper_data = mapper(X,d_from_x_axis,5,5,0.25)
+print(mapper_data)
+
+show_graph(mapper_data)
 #nearest_neighbor(X)
 #clustering(X,0.2)
-"""
