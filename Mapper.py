@@ -274,9 +274,42 @@ def reduction(A):
                 break
         if not canceled:
             non_zero_column.append(j)
-    return A
+    #Return nothing because A is changed
         
+def paired_vertices(A): #Return the list of birth-terminal pairs and unpaired vertices 
+    m,n=A.shape[0],A.shape[1]
+    L=[]
+    for j in range(n):
+        paired=False
+        for i in range(m):
+            if A[i][j] == 1:    #Pivot
+                L.append([1,j+2])
+                paired=True
+                break
+        if paired==False:
+            L.append([1,"inf"])
+    return L
 
+def show_persistant_diagramm(paired):
+    fig=plt.figure()
+    n=len(paired)
+    X=np.linspace(0,n+1.5,1000)
+    axes = plt.gca()
+    axes.xaxis.set_ticks(range(n+2))
+    axes.yaxis.set_ticks(range(n+2))
+    grad=[i for i in range(n+1)]
+    axes.yaxis.set_ticklabels(grad+["$\infty$"])
+    plt.xlabel("Birth")
+    plt.ylabel("Death")
+    plt.plot(X,X)
+    for p in paired:
+        if p[1]=="inf":
+            plt.scatter(p[0],n+1,c='r')
+        else:
+            plt.scatter(p[0],p[1],c='r')
+    for i in range(2,n+1):
+        plt.scatter(i,n+1,c='b')
+    plt.show()
 
 def show_graph(data):
     # data is a list of list. sublist of len 1 is a node, sublist of len 2 is an edge
@@ -288,25 +321,22 @@ def show_graph(data):
     nx.draw(G, with_labels=True)
     plt.show()
 
+"""
 X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
 A=boundary_matrix(X)
-# print(A)
-# print()
-# add_column(A,3,[0,1])
-# print(A)
-print(reduction(A))
-
-
+A=reduction(A)
+L=paired_vertices(A)
+print(L)
+persistant_diagramm(L)
 
 """
 file="ant.ply"
 X=export(file)
-
-# print(X)
-# display(X)
-mapper_data = mapper(X,d_from_x_axis,5,5,0.25)
+display(X)
+mapper_data = mapper(X,d_from_x_axis,5,3,0.25)
 print(mapper_data)
-
+A=boundary_matrix(mapper_data)
+reduction(A)
 show_graph(mapper_data)
-
-"""
+L=paired_vertices(A)
+show_persistant_diagramm(L)
