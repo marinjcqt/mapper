@@ -304,11 +304,16 @@ def show_persistant_diagramm(paired):
     plt.plot(X,X)
     for p in paired:
         if p[1]=="inf":
-            plt.scatter(p[0],n+1,c='r')
+            plt.scatter(p[0],n+1,c='r', label='H1')
         else:
-            plt.scatter(p[0],p[1],c='r')
+            plt.scatter(p[0],p[1],c='r', label='H1')
     for i in range(2,n+1):
-        plt.scatter(i,n+1,c='b')
+        plt.scatter(i,n+1,c='b', label='H0')
+    plt.legend()
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys())
+    plt.title("Persistance Diagram")
     plt.show()
 
 def show_graph(data):
@@ -330,11 +335,12 @@ print(L)
 persistant_diagramm(L)
 
 """
+
+
 file="ant.ply"
 X=export(file)
 display(X)
 mapper_data = mapper(X,d_from_x_axis,5,3,0.25)
-print(mapper_data)
 A=boundary_matrix(mapper_data)
 reduction(A)
 show_graph(mapper_data)
