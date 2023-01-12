@@ -17,7 +17,8 @@ from itertools import combinations
 
 # Functions f (can be a projection)
 #Euclidean distance in dimension n
-def d(x,y):
+def d(x):
+    y=[0,0,0]
     n=len(x)
     S=0
     for i in range(n):
@@ -112,22 +113,9 @@ def convert(X):
     X = pd.DataFrame(X, columns = ['abscisse','ordonnée'])
 
 
-def nearest_neighbor(X):
-    plt.figure()
-    neigh = NearestNeighbors(n_neighbors=2)
-    nbrs = neigh.fit(X)
-    distances, indices = nbrs.kneighbors(X)
-    distances = np.sort(distances, axis=0)
-    distances = distances[:,1]
-    plt.plot(distances)
-    plt.show()
 
-def clustering(X,eps):  #Does not give nice results
-    #plt.figure()
-    clus = DBSCAN(eps, min_samples=5).fit(X)
-    return clus.labels_
-    #plt.scatter(X['abscisse'],X['ordonnée'],c = y_pred)
-    #plt.show()
+
+
 
 def K_means(X,k):
     clus=KMeans(n_clusters=k, random_state=0, n_init="auto").fit_predict(X)
@@ -138,15 +126,7 @@ def K_means(X,k):
         C[j].append(X[i])
     return C
 
-def hierarchical(X,k):
-    hierarchical_cluster = AgglomerativeClustering(n_clusters=k, metric='euclidean', linkage='ward')
-    clus = hierarchical_cluster.fit_predict(X)
-    n=len(X)
-    C=[[] for i in range(k)]
-    for i in range(n):
-        j=clus[i]
-        C[j].append(X[i])
-    return C
+
     
 def barycenter(points):
     dim=len(points[0])
@@ -313,7 +293,7 @@ def show_persistant_diagramm(paired):
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys())
-    plt.title("Persistance Diagram")
+    plt.title("Persistent Diagram")
     plt.show()
 
 def show_graph(data):
@@ -326,21 +306,13 @@ def show_graph(data):
     nx.draw(G, with_labels=True)
     plt.show()
 
-"""
-X=[[1],[2],[3],[4],[5],[6],[2,3],[2,4],[1,2],[3,4],[1,3],[1,5],[2,5]]
-A=boundary_matrix(X)
-A=reduction(A)
-L=paired_vertices(A)
-print(L)
-persistant_diagramm(L)
 
-"""
 
 
 file="ant.ply"
 X=export(file)
 display(X)
-mapper_data = mapper(X,d_from_x_axis,5,3,0.25)
+mapper_data = mapper(X,d_from_x_axis,6,3,0.25)
 A=boundary_matrix(mapper_data)
 reduction(A)
 show_graph(mapper_data)
