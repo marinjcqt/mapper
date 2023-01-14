@@ -611,11 +611,11 @@ def show_persistant_diagramm(paired):
     plt.plot(X, X)
     for p in paired:
         if p[1] == "inf":
-            plt.scatter(p[0], n + 1, c = 'r', label = 'H1')
+            plt.scatter(p[0], n + 1, c = 'r', label = 'H0')
         else:
-            plt.scatter(p[0], p[1], c = 'r', label = 'H1')
+            plt.scatter(p[0], p[1], c = 'r', label = 'H0')
     for i in range(2,n + 1):
-        plt.scatter(i, n + 1, c = 'b', label = 'H0')
+        plt.scatter(i, n + 1, c = 'b', label = 'H1')
     plt.legend()
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
